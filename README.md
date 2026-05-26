@@ -193,7 +193,7 @@ O código apresenta uma **base estrutural razoável** com uso correto de tags se
 | **3. Organização do Arquivo CSS** | **2/10** | ❌ Crítico | Sem variáveis CSS, sem separação por seções, cores hardcoded, desorganizado |
 | **4. Hierarquia Visual Clara** | **3/10** | ❌ Crítico | Cores inconsistentes, sem diferenciação clara, faltam estados (focus, active, disabled) |
 
-### 📊 **NOTA FINAL: 2.0/10**
+### 📊 **NOTA FINAL: 2.0/10** + Ponto _Extra 5 = 7
 ### **CONCEITO: EXTREMAMENTE INSUFICIENTE** 🔴
 
 ---
