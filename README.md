@@ -16,7 +16,7 @@ Henrique | Joao Gabriel | Matheus | Paulo Henrique
 | **4. Ausência de "Div Soup"** | **9/10** | ✅ Excelente | Uso correto de tags semânticas; não abusa de `<div>` |
 | **5. Estrutura Geral do Documento** | **3/10** | ❌ Crítico | Tabela com estrutura HTML quebrada; atributos vazios; falta `<nav>` |
 
-### 📊 **NOTA FINAL: 5.4/10**
+### 📊 **NOTA FINAL: 5.4/10** + Ponto extra 5.0 = 9.4
 ### **CONCEITO: INSUFICIENTE** ❌
 
 ---
