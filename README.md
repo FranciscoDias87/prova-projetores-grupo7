@@ -616,3 +616,160 @@ O arquivo CSS apresenta **problemas críticos e sistêmicos** que impedem seu fu
 | **Principais Problemas** | Formulário desorganizado | Erros de sintaxe |
 | **Prioridade de Correção** | 1 | 1 (mais crítico) |
 
+# Avaliação do app.js: 5/10 + Ponto_Extra 5 = 10
+
+## 🔍 Análise Geral
+
+Considerando que foi desenvolvido por aluno sem experiência, há esforço válido na estrutura, mas existem **problemas críticos** que impedem o funcionamento correto da aplicação.
+
+---
+
+## ✅ Pontos Positivos
+
+1. **Estrutura básica correta**: Uso apropriado de `addEventListener` e `preventDefault`
+2. **Validações presentes**: Tenta validar campos vazios e datas passadas
+3. **Uso de localStorage**: Tentativa de persistir dados (conceito avançado para iniciante)
+4. **Template literals**: Uso correto de template strings no HTML
+5. **Lógica de conceito**: Entende a necessidade de verificar conflitos de agendamento
+
+---
+
+## ❌ Problemas Críticos
+
+### 1. **Variáveis não declaradas**
+```javascript
+// ❌ Faltam estas variáveis (linha ~16)
+const projectorModel = document.querySelector('#projectorModel').value;
+const contactInfo = document.querySelector('#contactInfo').value;
+```
+O código as usa mas nunca as obtém do formulário.
+
+### 2. **Código fora do event listener**
+```javascript
+// ❌ PROBLEMA MAIOR
+reservationForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    console.log('Formulário enviado');
+});
+// Resto do código aqui FORA do listener - executa na página load!
+const teacherName = document.querySelector('#teacher-name').value;
+```
+
+**Deveria ser:**
+```javascript
+reservationForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // TODO ESTE CÓDIGO AQUI DENTRO
+    const teacherName = document.querySelector('#teacher-name').value;
+    // ...
+});
+```
+
+### 3. **Database reinicializada a cada submit**
+```javascript
+const reservationDatabase = []; // ❌ Sempre vazia!
+```
+Perde todos os dados anteriores a cada submissão.
+
+### 4. **Erro de sintaxe**
+```javascript
+const savedReservations =
+    JSON.parse(localStorage.getItem('reservations')) || [];
+    getItem  // ❌ Linha orfã, sem contexto
+```
+
+### 5. **Lógica de persistência invertida**
+- Salva a database vazia
+- Carrega depois (não usa para nada)
+
+---
+
+## 🛠️ Versão Corrigida (Estrutura Básica)
+
+```javascript
+const reservationForm = document.querySelector('#reservation-form');
+const reservationList = document.querySelector('#reservation-list');
+
+// Carrega reservas do localStorage ao iniciar
+let reservationDatabase = JSON.parse(localStorage.getItem('reservations')) || [];
+
+reservationForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    
+    // Obtém valores do formulário
+    const teacherName = document.querySelector('#teacher-name').value;
+    const reservationDate = document.querySelector('#reservationDate').value;
+    const startTime = document.querySelector('#starttime').value;
+    const projectorModel = document.querySelector('#projectorModel').value;
+    const contactInfo = document.querySelector('#contactInfo').value;
+    
+    // Validação 1: Campos vazios
+    if (!teacherName || !reservationDate || !startTime || !projectorModel || !contactInfo) {
+        alert('Preencha todos os campos!');
+        return;
+    }
+    
+    // Validação 2: Data passada
+    const currentDate = new Date().toISOString().split('T')[0];
+    if (reservationDate < currentDate) {
+        alert('Não é permitido agendar datas passadas!');
+        return;
+    }
+    
+    // Validação 3: Conflito de agendamento
+    const isReserved = reservationDatabase.some(reservation =>
+        reservation.projectorModel === projectorModel &&
+        reservation.reservationDate === reservationDate &&
+        reservation.startTime === startTime
+    );
+    
+    if (isReserved) {
+        alert('Este projetor já está reservado neste horário!');
+        return;
+    }
+    
+    // Adiciona nova reserva
+    const newReservation = { teacherName, reservationDate, startTime, projectorModel, contactInfo };
+    reservationDatabase.push(newReservation);
+    
+    // Atualiza interface
+    addRowToTable(newReservation);
+    
+    // Salva no localStorage
+    localStorage.setItem('reservations', JSON.stringify(reservationDatabase));
+    
+    reservationForm.reset();
+});
+
+function addRowToTable(reservation) {
+    const tableRow = document.createElement('tr');
+    tableRow.innerHTML = `
+        <td>${reservation.teacherName}</td>
+        <td>${reservation.reservationDate}</td>
+        <td>${reservation.startTime}</td>
+        <td>${reservation.projectorModel}</td>
+        <td>${reservation.contactInfo}</td>
+    `;
+    reservationList.appendChild(tableRow);
+}
+```
+
+---
+
+## 📚 Sugestões de Aprendizado
+
+| Conceito | Por quê |
+|----------|--------|
+| **Event flow** | Entender quando o código executa |
+| **Scope** | Variáveis em lugares corretos |
+| **Arrow functions** | Sintaxe moderna (`=>`) é mais limpa |
+| **Destructuring** | Simplifica extração de valores |
+| **Tratamento de erros** | `try/catch` para localStorage |
+
+---
+
+## 💡 Conclusão
+
+Para um iniciante, você **entendeu os conceitos fundamentais** (eventos, DOM, localStorage). O problema é **execução e ordem de código**. Com essas correções, a aplicação funcionaria corretamente! 👍
+
